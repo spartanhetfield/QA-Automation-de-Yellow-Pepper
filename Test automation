@@ -518,4 +518,4 @@ Scenario: Create User with Incorrect Data
     And an error message indicating invalid data should be displayed
 
 
-I created a complete test suite to cover many possible test cases for functional and nonfunctional testing using the swagger pet store
+I created a complete test suite to cover many possible test cases for functional and nonfunctional testing for the swagger pet store

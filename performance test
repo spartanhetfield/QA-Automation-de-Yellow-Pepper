@@ -1,0 +1,87 @@
+Performance test of the pet store
+
+---Login performance test 
+K6 example
+
+import http from 'k6/http';
+import { sleep, check } from 'k6';
+
+export let options = {
+  stages: [
+    { duration: '1m', target: 50 }, // 50 users during 1 mionute
+    { duration: '3m', target: 100 }, // 100 users during 3 minutes
+    { duration: '1m', target: 0 }, // Decrease to 0 users in 1 minute
+  ],
+};
+
+export default function () {
+  // Data for login (they can be generated randomly or uploaded from a CSV document)
+  let payload = JSON.stringify({
+    username: 'user',
+    password: 'password',
+  });
+
+  let headers = {
+    'Content-Type': 'application/json',
+  };
+
+  let res = http.post('https://petstore.swagger.io/#/user/loginUser', payload, { headers: headers });
+
+  //Verify if the request is ok and if the response time is ok as well
+  check(res, {
+    'status is 200': (r) => r.status === 200,
+    'transaction time is OK': (r) => r.timings.duration < 200, // Verify the response time is less than 200 ms
+  });
+
+  // Add a break to simulate the behavior of a real user
+  sleep(1);
+}
+
+This script simulates a scenario where the data of a user with a random ID between 1 and 1000 is updated. Three stages are configured to gradually increase to 50 virtual users for 1 minute, maintain 50 virtual users for 3 minutes, and then gradually decrease to 0 virtual users for 1 minute
+
+
+---Place order performance test
+
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export let options = {
+ stages: [
+ { duration: '1m', target: 50 }, // 50 users during 1 minute
+ { duration: '3m', target: 50 }, // Maintain 50 users during 3 minutes
+ { duration: '1m', target: 0 }, // Decrease to 0 users during 1 minute
+ ],
+};
+
+export default function () {
+ // Generate a random product ID between 1 and 1000
+ let productId = Math.floor(Math.random() * 1000) + 1;
+
+ // Payload to generate a purchase order
+ let payload = JSON.stringify({
+ product_id: productId,
+ quantity: 1,
+ // Other fields related to the purchase order
+ });
+
+ // HTTP headers
+ let headers = {
+ 'Content-Type': 'application/json',
+ };
+
+ // Make a POST request to place an order
+ let res = http.post('https://petstore.swagger.io/#/store/placeOrder', payload, { headers: headers });
+
+ // Check the status code and response time of the request
+ check(res, {
+ 'status is 200': (r) => r.status === 200,
+ 'transaction time is OK': (r) => r.timings.duration < 200,
+ });
+
+ // Add a pause between requests
+ sleep(1);
+}
+
+This script simulates a scenario where purchase orders are generated for a product with a random ID between 1 and 1000. It configures three stages to gradually increase to 50 virtual users for 1 minute,
+maintain 50 virtual users for 3 minutes, and then gradually decrease to 0 virtual users for 1 minute
+

@@ -1,6 +1,6 @@
 Performance test of the pet store
 
----Login performance test 
+//Login performance test 
 K6 example
 
 import http from 'k6/http';
@@ -40,7 +40,7 @@ export default function () {
 This script simulates a scenario where the data of a user with a random ID between 1 and 1000 is updated. Three stages are configured to gradually increase to 50 virtual users for 1 minute, maintain 50 virtual users for 3 minutes, and then gradually decrease to 0 virtual users for 1 minute
 
 
----Place order performance test
+//Place order performance test
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';

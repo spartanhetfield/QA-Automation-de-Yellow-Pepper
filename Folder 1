@@ -1,0 +1,521 @@
+API test automation of the petstore
+
+Create a local environment witha base URL variable with https://petstore.swagger.io/#/ as an initial value
+
+Test cases
+
+For the Pet validate section validate the next scenarios:
+UploadImage with correct data
+UploadImage with incorrect data
+Add a new pet to the store with correct data
+Add a new pet to the store with incorrect data
+Update an existing pet with correct data
+Update an existing pet with incorrect data
+Finds Pets by status with correct data
+Finds Pets by status with incorrect data
+Find pet by ID with correct data
+Find pet by ID with incorrect data
+Updates a pet in the store with form data with correct data
+Updates a pet in the store with form data with inccorrect data
+Deletes a pet with correct data
+Deletes a pet with incorrect data
+
+For the store section validate the next scenarios:
+Returns pet inventories by status
+Place an order for a pet by ID
+Find purchase order by ID
+Delete purchase order by ID
+
+For the operations about user section validate the next scenarios: 
+Creates list of users with given input array with correct data
+Creates list of users with given input array with incorrect data
+Get user by name with correct data 
+Get user by name with incorrect data
+Updated user with correct data 
+Updated user with incorrect data
+Delete user with correct data  
+Delete user with incorrect data
+Logs user into system with correct data 
+Logs user into system with incorrect data
+Logs out current logged in user session with correct data 
+Logs out current logged in user session with incorrect data
+Creates list of users with given input array with correct data  
+Creates list of users with given input array with incorrect data
+Create user with correct data 
+Create user with incorrect data
+
+To automate the test cases 
+
+Create a collection for the different sections:
+pet Everything about your Pets
+store Access to Petstore orders
+user Operations about user
+
+Feature: Upload Image
+  As a user
+  I want to upload an Image
+  So that I can add visual content
+
+  Scenario: Successful upload
+    Given I am on the image upload request
+    When I click on the upload button
+    And I proceed to send the request
+    And I input the correct id
+    And I input the file
+    And I confirm the upload
+    Then I should receive a confirmation message
+    And the image was successfully upload
+
+Scenario: Validate the behavior of the upload request with incorrect id
+    Given I am on the image upload request
+    When I click on the upload button
+    And I proceed to send the request
+    And I input the incorrect id
+    And I input the file
+    And I confirm the upload
+    Then I should receive an error message
+    And the image wasn´t upload
+
+Scenario: Validate the behavior of the upload request with invalid file 
+    Given I am on the image upload request
+    When I click on the upload button
+    And I proceed to send the request
+    And I input the id
+    And I input an invalid file
+    And I confirm the upload
+    Then I should receive an error message
+    And the image wasn't  upload
+
+
+Feature: Add a pet to the pet store
+ As a pet store correct user
+ I want to be able to add new pet to the store
+ So that customers can see and buy pets
+
+Scenario: Add a new pet to inventory
+ Given that I am on the pet store
+ When I add a new pet with the following details: correct Name, available Status 
+ Then you should see a success message indicating that the pet has been successfully added to the pet store
+ And the new pet should be available for sale in the store
+
+Scenario: Add a new pet to inventory with incorrect name
+ Given that I am on the pet store
+ When I add a new pet with the following details: wrong Name, available Status 
+ Then you should see a success message indicating that the pet hasn't been successfully added to the pet store
+ And the new pet shouldn't be available for sale in the store
+
+Scenario: Add a new pet to inventory with unavailable status
+ Given that I am on the pet store
+ When I add a new pet with the following details: Name, unavailable Status 
+ Then you should see a success message indicating that the pet hasn't been successfully added to the pet store
+ And the new pet shouldn't be available for sale in the store
+
+Feature: Update a pet in the pet store
+ As a pet store correct user
+ I want to be able to update the information of a pet in the inventory
+ To keep pet details up to date and accurate
+
+Scenario: Update information for an existing pet
+ Given that I am on the pet store 
+ And there is a pet named "doggie" in the inventory
+ When I update the details of the pet "doggie" with the following: Name "dog", status available
+ Then you should see a success message indicating that the pet information has been successfully updated
+ And the updated details of the "dog" pet should be reflected in the inventory
+
+Scenario: Update information for an existing pet with incorrect name
+ Given that I am on the pet store 
+ And there is a pet named "doggie" in the inventory
+ When I update the details of the pet "doggie" with the following: Name "bad word", status available
+ Then you should see a success message indicating that the pet information hasn't been successfully updated
+ And the updated details of the "doggie" pet shouldn't be reflected in the inventory
+
+Scenario: Update information for an existing pet with incorrect status
+ Given that I am on the pet store 
+ And there is a pet named "doggie" in the inventory
+ When I update the details of the pet "doggie" with the following: Name "doggie", status null
+ Then you should see a success message indicating that the pet information hasn't been successfully updated
+ And the updated details of the "doggie" pet shouldn't be reflected in the inventory
+
+Feature: Find Pets by Status in Pet Store
+  As a correct user
+  I want to be able to find pets by their status in the pet store
+  So that I can see which pets are available 
+
+  Scenario: Find Pets by Status available
+    Given I am on the Pet Store 
+    When I search for pets by status with the status "available"
+    Then I should see a list of pets with status "available"
+    And each pet in the list should have the correct data displayed
+
+  Scenario: Find Pets by Status unavailable
+    Given I am on the Pet Store 
+    When I search for pets by status with the status "unavailable"
+    Then I should see a list of pets with status "unavailable"
+    And each pet in the list should have the correct data displayed
+
+
+ Scenario: Find Pets by Status with incorrect status
+    Given I am on the Pet Store 
+    When I search for pets by status with the status "null"
+    Then I should see an error message indicating that there is no status other than available and not available
+
+
+Feature: Find Pets by ID in Pet Store
+  As a correct user
+  I want to be able to find pets by their ID in the pet store
+  So that I can see which pets are available 
+
+ Scenario: Find Pets by correct ID
+    Given I am on the Pet Store 
+    When I search for pets by ID with the status "correct_ID"
+    Then I should see a list of pets with the given ID
+    And the pet should have the correct data displayed
+
+ Scenario: Find Pets by incorrect ID
+    Given I am on the Pet Store 
+    When I search for pets by ID with the status "incorrect_ID"
+    Then I should see a list of pets with the given ID
+    And the page show an error message indicating that you are searching an incorrect ID
+
+
+Feature: Update a Pet in Pet Store with form data
+  As a pet store correct user
+  I want to be able to update pet information with correct data
+  So that the pet details remain accurate and up-to-date
+
+  Scenario: Update a Pet with form Data
+    Given I´m on the pet store as a user
+    And there is an existing pet named "doggie" in the pet store
+    When I navigate to the page to update pet details
+    And I fill out the form with the correct data: ID, Name and status
+    And I submit the form
+    Then I should see a success message confirming that the pet details have been updated
+    And the updated pet details should be reflected correctly in the pet store
+
+  Scenario: Update a Pet with form Data and incorrect ID
+    Given I´m on the pet store as a user
+    And there is an existing pet named "doggie" in the pet store
+    When I navigate to the page to update pet details
+    And I fill out the form with the data: incorrect ID, Name and status
+    And I submit the form
+    Then I should see an error message confirming that the pet details haven't been updated
+    And the updated pet details shouldn't be reflected correctly in the pet store
+
+Scenario: Update a Pet with form Data and incorrect Name
+    Given I´m on the pet store as a user
+    And there is an existing pet named "doggie" in the pet store
+    When I navigate to the page to update pet details
+    And I fill out the form with the data: ID, incorrect Name and status
+    And I submit the form
+    Then I should see an error message confirming that the pet details haven't been updated
+    And the updated pet details shouldn't be reflected correctly in the pet store
+
+Scenario: Update a Pet with form Data and incorrect status
+    Given I´m on the pet store as a user
+    And there is an existing pet named "doggie" in the pet store
+    When I navigate to the page to update pet details
+    And I fill out the form with the data: ID, incorrect Name and status
+    And I submit the form
+    Then I should see an error message confirming that the pet details haven't been updated
+    And the updated pet details shouldn't be reflected correctly in the pet store
+
+Feature: Delete a Pet 
+  As a pet store correct user
+  I want to be able to delete a pet from the store
+  So that outdated or incorrect pet records can be removed
+
+  Scenario: Delete a Pet
+    Given I am logged in as a correct user
+    And there is an existing pet in the store
+    When I navigate to the page to delete the pet
+    And I confirm the deletion of the pet using the correct ID 
+    Then I should see a success message confirming that the pet (correctID) has been deleted
+    And the pet (correctID) should no longer appear in the store
+
+  Scenario: Delete a Pet with incorrect data
+    Given I am logged in as a correct user
+    And there is an existing pet in the store
+    When I navigate to the page to delete the pet
+    And I confirm the deletion of the pet using the incorrect ID 
+    Then I should see an error message confirming that the pet (incorrectID) doesn't exist
+
+
+Feature: Returns Pet Inventories by Status in Pet Store
+  As a user
+  I want to be able to view pet inventories based on their status in the pet store
+  So that I can see which pets are available or unavailable
+
+  Scenario: Return Pet Inventories by Status
+    Given I am on the Pet Store as a correct user
+    When I request pet inventories by status
+    Then I should see a list of pets categorized by their status
+    And each pet category should display the correct number of pets
+    And each pet listed should have the correct details displayed
+
+  Scenario: Return Pet Inventories by incorrect Status
+    Given I am on the Pet Store as a correct user
+    When I request pet inventories by incorrect status
+    Then I shouldn't see a list of the pets with incorrect status
+
+
+Feature: Place an Order for a Pet in Pet Store by ID
+  As a customer
+  I want to be able to place an order for a pet
+  So that I can purchase the desired pet from the pet store
+
+  Scenario: Place an Order for a Pet
+    Given I am on the Pet Store as a correct user
+    When I select a place order with a correct ordrID for purchase
+    And I proceed to checkout
+    And I confirm the order
+    Then I should receive an order confirmation
+    And the pet should be reserved for me
+
+  Scenario: Place an Order for a Pet with incorrect ID
+    Given I am on the Pet Store as a correct user
+    When I select a place order with a correct orderID for purchase
+    And I proceed to checkout
+    And I  can't confirm the order
+    Then I should receive an error mesagge
+
+
+Feature: Find Purchase Order by ID for a Pet in Pet Store
+  As a correct user
+  I want to be able to find a purchase order by its ID for a pet
+  So that I can track the status of my order
+
+  Scenario: Find Purchase Order by ID
+    Given I am logged in as a correct user on the Pet Store
+    And I have placed an order for a pet with correctID
+    When I search for the purchase order by its ID
+    Then I should see the details of the purchase order for the pet with the correctID
+    And the status of the order should be displayed
+
+  Scenario: Find Purchase Order by ID
+    Given I am logged in as a correct user on the Pet Store
+    And I have placed an order for a pet with correctID
+    When I search for the purchase order by its ID
+    Then I should see the details of the purchase order for the pet with the correctID
+    And the status of the order should be displayed
+
+ Scenario: Find Purchase Order by ID with incorrectID
+    Given I am logged in as a correct user on the Pet Store
+    And I have placed an order for a pet with incorrectID
+    When I search for the purchase order by its ID
+    Then I should see an error message
+
+
+Feature: Delete Purchase Order by ID for a Pet in Pet Store
+  As a correct user
+  I want to be able to delete a purchase order by its ID for a pet
+  So that I can cancel an order if needed
+
+  Scenario: Delete Purchase Order by ID
+    Given I am logged in as a correct user on the Pet Store 
+    And I have placed an order for a pet with correct ID
+    When I request to delete the purchase order by its ID
+    Then I should receive a confirmation message for the deleted order
+    And the purchase order for the pet correctID should be removed from my orders list
+
+  Scenario: Delete Purchase Order by incorrect ID
+    Given I am logged in as a correct user on the Pet Store 
+    And I have placed an order for a pet with incorrect ID
+    When I request to delete the purchase order by its ID
+    Then I should receive an error message 
+
+
+Feature: Create List of Users with Given Input Array in Pet Store
+  As a pet store correct user
+  I want to be able to create a list of users with correct data from a given input array
+  So that I can efficiently manage user information in the system
+
+  Scenario: Create List of Users with Correct Data
+    Given I am logged in as a correct user on the Pet Store 
+    When I provide the system with the input array of users:
+      | Username    | Email                  | password   |
+      | user1       | user1@example.com      | customer   |
+      | user2       | user2@example.com      | customer   |
+      | user3       | user3@example.com      | customer   |
+    Then the system should create users with the provided data successfully
+    And the created users should be visible in the user management
+
+ Scenario: Create List of Users with incorrect Data
+    Given I am logged in as a correct user on the Pet Store 
+    When I provide the system with the input array of users:
+      | Username    | Email                  | password   |
+      | use...r1    | user1example.com       | customer   |
+      | user2°°°    | user2@example.com      |            |
+      | user{3      | user3@examplecom       | customer   |
+    Then the system shouldn't create users with the provided data 
+    And the created users shouldn't be visible in the user management
+
+    
+Feature: Get User by Name in Pet Store
+  As a pet store correct user
+  I want to be able to retrieve a user by their data
+  So that I can view and manage their details
+
+  Scenario: Get User by username
+    Given I am logged in as a correct user on the Pet Store
+    When I search for a user by their correct username
+    Then I should see the details of the username
+    And the user's information should be accurate
+
+ Scenario: Get User by email
+    Given I am logged in as a correct user on the Pet Store
+    When I search for a user by their correct email
+    Then I should see the details of the email
+    And the user's information should be accurate
+
+  Scenario: Get User with incorrect username
+    Given I am logged in as a correct user on the Pet Store
+    When I search for a user by their incorrect username
+    Then I shouldn't see the details of the username
+
+Scenario: Get User with incorrect email
+    Given I am logged in as a correct user on the Pet Store
+    When I search for a user by their incorrect email
+    Then I shouldn't see the details of the username
+
+
+Feature: Update User in Pet Store
+  As a pet store correct user
+  I want to be able to update a user's information
+  So that I can ensure their details are accurate and up-to-date
+
+  Scenario: Update User Information
+    Given I am logged in as an administrator on the Pet Store website
+    And there is an existing user named "user1" in the system
+    When I navigate to the user profile page for "user1"
+    And I update the user's information with the following details:
+      | Username    | Email                   | password   |
+      | John        | newemail@example.com    | admin      |
+    And I save the changes
+    Then I should see a success message confirming that the user's information has been updated
+    And the user's profile page should display the updated information   
+
+  Scenario: Update User Information with incorrect data
+    Given I am logged in as an administrator on the Pet Store website
+    And there is an existing user named "user1" in the system
+    When I navigate to the user profile page for "user1"
+    And I update the user's information with the following details:
+      | Username    | Email                   | password   |
+      | John°°#     | newemail@example com    |            |
+    And I save the changes
+    Then I should see an error message
+    And the user's profile page shouldn't display the updated information  
+
+
+Feature: Delete User in Pet Store
+  As a pet store correct user
+  I want to be able to delete a user from the system
+  So that their account is no longer active
+
+  Scenario: Delete User Account
+    Given I am logged in as a correct user on the Pet Store 
+    And there is an existing user named "user1" in the system
+    When I navigate to the user management section
+    And I select to delete the user account for "user"
+    And I confirm the deletion
+    Then I should see a success message confirming that the user account has been deleted
+    And the user "user1" should no longer appear in the user list
+
+  Scenario:Delete User with Incorrect Data
+    Given I am logged in as a correct user on the Pet Store 
+    And there is no user with the name "NonExistentUser" in the system
+    When I attempt to delete the user account for "NonExistentUser"
+    Then I should see an error message indicating that the user does not exist
+    And no changes should be made to the user list
+
+
+Feature: Login to Pet Store
+  As a correct user on the pet store
+  I want to be able to log into the Pet Store
+  So that I can access my account and perform actions
+
+  Scenario: Login with Correct Credentials
+    Given I am on the login on the Pet Store
+    When I enter my correct username "user1" and password "customer"
+    And I try to login
+    Then I should be successfully logged into the system
+
+
+  Scenario: Login with Incorrect Credentials
+    Given I am on the login on the Pet Store 
+    When I enter an incorrect username "invalid_user" and an incorrect password "invalid_password"
+    And I try to login
+    Then I should see an error message indicating login failure
+    And I should remain on the login page
+
+
+Feature: Logout User from Pet Store with Correct Data
+  As a correct user in the pet store
+  I want to be able to log out from the Pet Store
+  So that my session is terminated and I am securely logged out
+
+  Scenario: Logout with correct data
+    Given I am logged in as a user on the Pet Store 
+    When I navigate to the logout option
+    Then I should be successfully logged out from the store
+    And I should be redirected to the login page
+
+  Scenario: Logout with Incorrect Data
+    Given I am logged in as a user on the Pet Store 
+    When I attempt to logout with incorrect credentials
+    Then I should remain logged in to the system
+    And I should not be redirected to the login page
+
+
+Feature: Create List of Users with Given Input Array
+  As a pet store correct user
+  I want to be able to create a list of users  from a given input array
+  So that I can efficiently manage user information in the system
+
+  Scenario: Create List of Users with Correct Data
+    Given I am logged in as a correct user on the Pet Store website
+    When I provide the system with the input array of users:
+      | Username    | Email                  |Password    |
+      | user1       | user1@example.com      | customer   |
+      | admin1      | admin1@example.com     | admin      |
+      | user2       | user2@example.com      | customer   |
+    Then the system should create users with the provided data successfully
+    And the created users should be visible in the user management system  
+
+Scenario: Create List of Users with Incorrect Data
+    Given I am logged in as an administrator on the Pet Store 
+    When I provide the system with an input array of users with incorrect data:
+      | Username    | Email                  | password   |
+      | user1       | user1@example.com      | customer   |
+      | user2       | invalid_email          | customer   |
+    Then the system should not create any users
+    And an error message indicating invalid data should be displayed
+
+
+Feature: Create User in Pet Store
+  As a pet store correct store
+  I want to be able to create a new user with correct data
+  So that they can access the system and perform actions
+
+  Scenario: Create User with Correct Data
+    Given I am logged in as a correct user on the Pet Store
+    When I navigate to the user creation page
+    And I fill in the user details with correct data:
+      | Username    | Email                  | password   |
+      | user1       | user1@example.com      | customer   |
+    And I submit the data
+    Then the user "user1" should be successfully created
+    And I should receive a confirmation message
+
+
+Scenario: Create User with Incorrect Data
+    Given I am logged in as a correct user on the Pet Store 
+    When I navigate to the user creation page
+    And I fill in the user details with incorrect data:
+      | Username    | Email            | password   |
+      | invalid_user| invalid_email    | customer   |
+    And I submit the data
+    Then the user should not be created
+    And an error message indicating invalid data should be displayed
+
+
+I created a complete test suite to cover many possible test cases for functional and nonfunctional testing using the swagger pet store

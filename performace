@@ -1,0 +1,93 @@
+//Performance script pet store login
+
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+
+const BASE_URL = 'https://petstore.swagger.io/#/user/loginUser';
+const USERNAME = 'user';
+const PASSWORD = 'password';
+const MAX_VUS = 10; // Maximum number of Simultaneous Virtual Users
+const DURATION = '30s'; // Test duration
+
+export let options = {
+ stages: [
+ { duration: '10s', target: MAX_VUS }, // Gradual increase in virtual users
+ { duration: '20s', target: MAX_VUS }, // We maintain the maximum number of users
+ { duration: '10s', target: 0 }, // Gradual decrease in virtual users
+ ],
+ thresholds: {
+ http_req_duration: ['p(95)<500'], // Performance threshold 95% of requests must be less than 500ms
+ },
+};
+
+export default function () {
+ Step 1: Login
+ let loginResponse = http.post(`${BASE_URL}/login`, {
+ username: USERNAME,
+ password: PASSWORD,
+ });
+
+ //Step 2: Verifying the login result
+ check(loginResponse, {
+ 'Login successful': (res) => res.status === 200,
+ });
+
+ // Random wait between 3 and 5 seconds
+ sleep(Math.random() * 2 + 3);
+}
+
+//This script performs a login performance test on the pet store
+//Run the script with the the command k6 run Performance_script_pet_store.js
+//After running the script, you will get a detailed performance report showing the request response time, number of errors, etc.
+
+
+//Place order performance test
+
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+// Setting
+const BASE_URL = 'https://yourdomain.com';
+const MAX_VUS = 10; // Maximum number of Simultaneous Virtual Users
+const DURATION = '30s'; // Test duration
+
+export let options = {
+ stages: [
+ { duration: '10s', target: MAX_VUS }, // Gradual increase in virtual users
+ { duration: '20s', target: MAX_VUS }, // We maintain the maximum number of users
+ { duration: '10s', target: 0 }, // Gradual decrease in virtual users
+ ],
+ thresholds: {
+ http_req_duration: ['p(95)<500'], // Performance threshold 95% of requests must be less than 500ms
+ },
+};
+
+export default function () {
+ // Step 1: Generation of purchase order
+ let orderData = {
+ // Purchase order data (you can customize according to your application)
+ product: 'Test product',
+ quantity: 5,
+ unit_price: 10.
+ // Other data necessary for the purchase order
+ };
+
+ let orderResponse = http.post(`${BASE_URL}/generate_purchaseorder`, orderData);
+
+ // Step 2: Verification of the purchase order generation result
+ check(orderResponse, {
+ 'Purchase order successfully generated': (res) => res.status === 200,
+ });
+
+ // Random wait 3-5 seconds before next action
+ sleep(Math.random() * 2 + 3);
+}
+
+//This script simulates the place order generation process in the pet store
+
+// Run k6 run placer_order_performance_test.js
+
+//After running the script, you will get a detailed performance report showing the request response time, 
+//number of errors, etc. This report will help you identify any performance issues
+//in the purchase order generation process and optimize it as necessary.
